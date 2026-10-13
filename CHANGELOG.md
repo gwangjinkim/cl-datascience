@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- docs/DESIGN.md: design document for the verbs and the DSL (summary,
+  principles, architecture, the verbs in their layers with signatures,
+  assumption modes, results, defining forms for method authors,
+  compilation to the planner, data representation including unit and
+  treatment structures, solver, rule base and sources, execution and
+  record, LLM use, prior art, roadmap, decisions). docs/build-pdf.sh and
+  docs/pdf-header.tex build DESIGN.pdf with pandoc and xelatex.
 - docs/VERBS.md: the verbs in three layers (project verbs from
   1d-analysis.lisp, question verbs as planner goals, method actions chosen
   by the planner), how optional declarations work, plan-run-replan, open
