@@ -1,0 +1,19 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "birthwt_successes_failures": {
+      "successes": 59,
+      "failures": 130
+    },
+    "birthwt_wald": [0.246107106953944, 0.37823151738468],
+    "birthwt_wilson": [0.250403105059018, 0.381418804844617],
+    "birthwt_exact": [0.246888559603843, 0.383454564815498],
+    "stanza_successes_failures": {
+      "successes": 3,
+      "failures": 3
+    },
+    "stanza_wald": [0.099924026970391, 0.900075973029609],
+    "stanza_wilson": [0.187616306482651, 0.812383693517349],
+    "stanza_exact": [0.118117248757025, 0.881882751242975]
+  }
+}

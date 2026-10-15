@@ -1,0 +1,17 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "ozone_missing": 37,
+    "ozone_missing_by_month": {
+      "Aug": 5,
+      "Jul": 5,
+      "Jun": 21,
+      "May": 5,
+      "Sep": 1
+    },
+    "complete_case_p": 6.43908420252727e-05,
+    "mean_imputation_p": 3.98053228127603e-05,
+    "mi_month_p": 4.41079525324293e-06,
+    "complete_case_lm_p": 4.82706453411472e-06
+  }
+}

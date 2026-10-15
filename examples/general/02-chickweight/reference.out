@@ -1,0 +1,16 @@
+# R version 4.6.1 (2026-06-24)
+
+## Data
+n_rows                             578
+n_chicks                           50
+
+## A. Rows taken as independent (invalid): oneway.test(weight ~ Diet)
+naive_p                            5.620498e-07
+naive_df_denominator               264.3255
+
+## B. Summary measure per chick: final weight (day 21), one value per chick
+final_n_chicks                     45
+final_p                            0.01218933
+
+## C. Mixed model: weight ~ Diet * Time, random intercept and slope per chick
+mixed_diet_lr_p                    4.655737e-05

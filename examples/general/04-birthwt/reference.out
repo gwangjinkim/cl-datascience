@@ -1,0 +1,14 @@
+# R version 4.6.1 (2026-06-24)
+
+## A. Effective sample size and parameters (Harrell, RMS 4.4)
+effective_n_m                      121.746
+parameters_p                       9
+limit_m_over_15                    8.116402
+
+## B. Stepwise selection (AIC) keeps
+stepwise_kept                      lwt  race  smoke  ptl  ht  ui
+
+## C. Apparent vs bootstrap optimism-corrected concordance (C statistic)
+c_apparent                         0.7461538
+c_optimism                         0.04895582
+c_corrected                        0.697198

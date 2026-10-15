@@ -1,0 +1,12 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "effective_n_m": 121.746031746032,
+    "parameters_p": 9,
+    "limit_m_over_15": 8.11640211640212,
+    "stepwise_kept": ["lwt", "race", "smoke", "ptl", "ht", "ui"],
+    "c_apparent": 0.746153846153846,
+    "c_optimism": 0.0489558237722325,
+    "c_corrected": 0.697198022381614
+  }
+}

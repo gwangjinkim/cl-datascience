@@ -1,0 +1,12 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "n_rows": 578,
+    "n_chicks": 50,
+    "naive_p": 5.62049756465674e-07,
+    "naive_df_denominator": 264.325510305108,
+    "final_n_chicks": 45,
+    "final_p": 0.0121893322545031,
+    "mixed_diet_lr_p": 4.65573676307499e-05
+  }
+}

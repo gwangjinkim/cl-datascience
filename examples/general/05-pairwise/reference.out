@@ -1,0 +1,13 @@
+# R version 4.6.1 (2026-06-24)
+
+## A. Unadjusted pairwise t-tests (no multiplicity adjustment)
+unadjusted_p                       CBT_Cont=0.0146899036  FT_CBT=0.0712944252  FT_Cont=0.0003887532
+
+## B. Holm-adjusted Welch t-tests
+holm_p                             CBT_Cont=0.02937981  FT_CBT=0.07129443  FT_Cont=0.00116626
+
+## C. Tukey HSD after one-way ANOVA
+tukey_p                            Cont-CBT=0.0581141123  FT-CBT=0.0864029974  FT-Cont=0.0002929915
+
+## D. Family-wise error with k unadjusted comparisons at 0.05
+fwer_3_independent_tests           0.142625

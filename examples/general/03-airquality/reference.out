@@ -1,0 +1,15 @@
+# R version 4.6.1 (2026-06-24)
+
+## Data
+ozone_missing                      37
+ozone_missing_by_month             Aug= 5  Jul= 5  Jun=21  May= 5  Sep= 1
+
+## A. Complete cases: oneway.test(Ozone ~ Month)
+complete_case_p                    6.439084e-05
+
+## B. Mean imputation (single imputation; standard errors too small)
+mean_imputation_p                  3.980532e-05
+
+## C. Multiple imputation (mice, 20 imputations, seed 1973): the same question
+mi_month_p                         4.410795e-06
+complete_case_lm_p                 4.827065e-06

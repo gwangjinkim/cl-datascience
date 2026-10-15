@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT docs/GENERAL-RULES.md: seven rules (G1-G7) from Introduction
+  to Modern Statistics (2nd ed.), Harrell's Regression Modeling Strategies,
+  An Introduction to Statistical Learning (2nd ed.), Regression and Other
+  Stories, the EMA guidelines on multiplicity and missing data, and Sterne
+  et al. (2009). examples/general/ (own uvr project with mice): proportion
+  intervals, ChickWeight repeated measurements, airquality missing values,
+  birthwt regression model, pairwise comparisons, with R references.
 - EXPERIMENT clinical rule book (src/dsl/clinical.lisp), including the
   common core: baseline and stratification adjustment, change scores,
   within-group tests, baseline tests, subgroups (interaction, exploratory

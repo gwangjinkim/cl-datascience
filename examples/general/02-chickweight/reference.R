@@ -1,0 +1,20 @@
+# General example 02: repeated measurements. datasets::ChickWeight: 50 chicks,
+# weight (g) measured up to 12 times (days 0-21), four diets.
+source("reference-lib.R")
+d <- as.data.frame(ChickWeight)
+d$Chick <- as.character(d$Chick); d$Diet <- paste0("diet", d$Diet)
+write_data(d)
+section("Data")
+report("n_rows", nrow(d)); report("n_chicks", length(unique(d$Chick)))
+section("A. Rows taken as independent (invalid): oneway.test(weight ~ Diet)")
+report("naive_p", oneway.test(weight ~ Diet, data = d)$p.value)
+report("naive_df_denominator", unname(oneway.test(weight ~ Diet, data = d)$parameter[2]))
+section("B. Summary measure per chick: final weight (day 21), one value per chick")
+final <- d[d$Time == 21, ]
+report("final_n_chicks", nrow(final))
+report("final_p", oneway.test(weight ~ Diet, data = final)$p.value)
+section("C. Mixed model: weight ~ Diet * Time, random intercept and slope per chick")
+m1 <- nlme::lme(weight ~ Diet * Time, random = ~ Time | Chick, data = d, method = "ML")
+m0 <- nlme::lme(weight ~ Time, random = ~ Time | Chick, data = d, method = "ML")
+report("mixed_diet_lr_p", anova(m0, m1)[2, "p-value"])
+finish()

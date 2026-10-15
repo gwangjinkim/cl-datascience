@@ -1,0 +1,13 @@
+# R version 4.6.1 (2026-06-24)
+
+## A. Low birth weight: 59 of 189 (condition holds)
+birthwt_successes_failures         successes= 59  failures=130
+birthwt_wald                       0.2461071  0.3782315
+birthwt_wilson                     0.2504031  0.3814188
+birthwt_exact                      0.2468886  0.3834546
+
+## B. Stanza B: 3 of 6 (condition fails)
+stanza_successes_failures          successes=3  failures=3
+stanza_wald                        0.09992403  0.90007597
+stanza_wilson                      0.1876163  0.8123837
+stanza_exact                       0.1181172  0.8818828
