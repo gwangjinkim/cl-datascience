@@ -15,7 +15,16 @@
                      (observed len)
                      (measured-before> supp len)
                      (measured-before> dose len)
-                     (rows-independent toothgrowth)))   ; one animal per row
+                     (rows-independent toothgrowth))    ; one animal per row
+             ;; EXPERIMENT: the same, with a declared justification for
+             ;; departing from design consistency (read by src/guidance.lisp)
+             (design-justified (set-by-design supp)
+                               (set-by-design dose)
+                               (observed len)
+                               (measured-before> supp len)
+                               (measured-before> dose len)
+                               (rows-independent toothgrowth)
+                               (justified depart-design-consistency)))
 
  :questions ((effects (and (explained-by-design> len supp)
                            (explained-by-design> len dose)))

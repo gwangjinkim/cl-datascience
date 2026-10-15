@@ -3,6 +3,12 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT `guided-plans` (src/guidance.lisp): every minimal plan with
+  its cost, category (recommended, acceptable, justified departure,
+  discouraged, against guidance), assumptions and departures, cheapest
+  first. Strengths, rules and sources of every assume-/depart- step are
+  in examples/guidance.lisp. Examples can sit in tiers (`:tier`);
+  `example-problem` exposes the planning problem of an example question.
 - EXPERIMENT.md: branch experiment/guided-rules tests whether rules can
   guide (ranked, labelled plans with costs and sources) instead of forbid.
   The branch is not to be merged.
@@ -71,6 +77,13 @@
   `tests/run.lisp` and `scripts/test.sh` running the suite under SBCL with
   `~/quicklisp` and under Roswell alike. AGENTS.md records the working rules
   (test first, both Lisp setups, uvr for R, small commits, this changelog).
+
+### Changed
+- EXPERIMENT: the design-consistency constraint no longer forbids. Example
+  03 with its design declared now gets the plan
+  depart-design-consistency, ols-fit dose len, labelled against guidance
+  with Fisher (1935) and ICH E9 as sources; with a declared justification
+  the departure is labelled justified.
 
 ### Fixed
 - Actions with several parameters of one type use wouldwork's `product`

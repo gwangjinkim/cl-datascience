@@ -114,10 +114,12 @@ EXPECTED-PLANS (compared as sets; see NORMALIZE-PLANS)."
   (plans-for ("03-toothgrowth" :plain :dose-from-len)
     ((ols-fit dose len))))
 
-(test toothgrowth-declared-design-forbids-the-reversed-model
-  ;; dose was set by the investigator, before len was measured: no plan
-  ;; may explain dose by len (a constraint of the domain).
-  (plans-for ("03-toothgrowth" :design :dose-from-len)))
+(test toothgrowth-declared-design-needs-a-departure-for-the-reversed-model
+  ;; dose was set by the investigator, before len was measured. EXPERIMENT
+  ;; (experiment/guided-rules): instead of no plan, the plan must depart
+  ;; from the design-consistency rule, as a recorded step.
+  (plans-for ("03-toothgrowth" :design :dose-from-len)
+    ((depart-design-consistency dose) (ols-fit dose len))))
 
 (test toothgrowth-prediction-in-the-reversed-direction-stays-allowed
   ;; "Which dose did this animal get?" is a legitimate prediction.

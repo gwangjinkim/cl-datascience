@@ -11,7 +11,8 @@ what is declared about the data and what is asked."
   :components ((:module "src"
                 :components ((:file "package")
                              (:file "planner")
-                             (:file "examples"))))
+                             (:file "examples")
+                             (:file "guidance"))))
   :in-order-to ((test-op (test-op "cl-datascience/tests"))))
 
 (defsystem "cl-datascience/tests"
@@ -20,5 +21,6 @@ what is declared about the data and what is asked."
   :components ((:module "tests"
                 :components ((:file "package")
                              (:file "planner-tests")
-                             (:file "stat101-tests"))))
+                             (:file "stat101-tests")
+                             (:file "guidance-tests"))))
   :perform (test-op (o c) (symbol-call :cl-datascience/tests :run-all)))

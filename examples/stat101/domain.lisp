@@ -50,6 +50,7 @@
   (randomized variable)                    ; assigned by a random mechanism
   (observed variable)                      ; arose from the process studied
   (measured-before> variable variable)
+  (design-rule-waived variable)            ; EXPERIMENT: after depart-design-consistency
   ;; spread of y around its trend in x (declared, or observed by a check)
   (constant-spread> variable variable)
   (nonconstant-spread> variable variable)
@@ -149,12 +150,25 @@
 ;;; set by design or randomized, or of a variable by one measured after it.
 ;;; Prediction (predicted-from>) is not an explanation and stays allowed.
 
+;;; EXPERIMENT (experiment/guided-rules): the constraint is softened. A plan
+;;; may break it after the step depart-design-consistency, which is
+;;; recorded with its cost and sources (examples/guidance.lisp).
+
 (define-constraint
   (not (exists ((?y ?x) variable)
          (and (estimated-trend> ?y ?x)
               (or (set-by-design ?y)
                   (randomized ?y)
-                  (measured-before> ?y ?x))))))
+                  (measured-before> ?y ?x))
+              (not (design-rule-waived ?y))))))
+
+(define-action depart-design-consistency 1
+  (?y variable)
+  (and (not (design-rule-waived ?y))
+       (or (set-by-design ?y) (randomized ?y)
+           (exists (?x variable) (measured-before> ?y ?x))))
+  (?y)
+  (assert (design-rule-waived ?y) (used depart-design-consistency)))
 
 ;;; Designed experiments
 
