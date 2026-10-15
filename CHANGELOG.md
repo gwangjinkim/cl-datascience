@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT docs/PRIOR-ART-R.md: how visStatistics, testflow, rstatix and
+  AssumpSure choose tests (from their vignettes, help pages and code), the
+  rules they share, their own caveats about pre-testing assumptions, and
+  what cl-datascience does differently. research/test-selection/ is the
+  uvr project (versions pinned) used to read and run them.
 - EXPERIMENT clinical tier (examples/clinical/, own uvr project and
   domain): 01 anorexia (MASS), R reference for ANCOVA, change score and
   outcome-only analyses and the baseline test. Guided plans: ANCOVA
