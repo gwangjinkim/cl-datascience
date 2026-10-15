@@ -24,41 +24,60 @@
 (defclass comparison (question)
   ((outcome :initarg :outcome :reader question-outcome)
    (by :initarg :by :reader question-by)
-   (estimand :initarg :estimand :initform :mean :reader question-estimand))
+   (estimand :initarg :estimand :initform :mean :reader question-estimand)
+   (aim :initarg :aim :initform :difference :reader question-aim)
+   (within :initarg :within :initform nil :reader question-within))
   (:documentation "Does OUTCOME differ between the groups of BY? ESTIMAND :mean
-asks about means, :location about the location of the distributions."))
+asks about means, :location about the location of the distributions. AIM:
+:difference (default), :equivalence, :baseline-balance, or
+:effect-modification (does the difference depend on the subgroups of
+WITHIN?)."))
 
 (defclass association (question)
   ((first :initarg :first :reader question-first)
    (second :initarg :second :reader question-second))
   (:documentation "Are two categorical variables associated?"))
 
-(defun make-comparison (data outcome &key by (estimand :mean) (book :common-core))
-  (make-instance 'comparison :data data :book book :estimand estimand
+(defun make-comparison (data outcome &key by (estimand :mean) (aim :difference) within book)
+  (make-instance 'comparison :data data :book (or book (data-rule-book data))
+                             :estimand estimand :aim aim :within (keywordize within)
                              :outcome (keywordize outcome) :by (keywordize by)))
 
-(defun make-association (data first second &key (book :common-core))
-  (make-instance 'association :data data :book book
+(defun make-association (data first second &key book)
+  (make-instance 'association :data data :book (or book (data-rule-book data))
                               :first (keywordize first) :second (keywordize second)))
+
+(defun survival-outcome-p (question)
+  "Is the outcome declared a time to an event?"
+  (member (list :time-to-event (question-outcome question))
+          (declared-facts (question-data question)) :test #'equal))
 
 (defgeneric question-goal (question)
   (:documentation "The planner goal that answers QUESTION.")
   (:method ((q comparison))
-    (list (ecase (question-estimand q)
-            (:mean :mean-difference>)
-            (:location :location-difference>))
-          (question-outcome q) (question-by q)))
+    (let ((y (question-outcome q))
+          (g (question-by q)))
+      (ecase (question-aim q)
+        (:baseline-balance (list :baseline-compared> y g))
+        (:equivalence (list :equivalence-shown> y g))
+        (:effect-modification (list :effect-modification> y g (question-within q)))
+        (:difference
+         (cond ((survival-outcome-p q) (list :survival-difference> y g))
+               ((eq (question-estimand q) :location) (list :location-difference> y g))
+               (t (list :mean-difference> y g)))))))
   (:method ((q association))
     (list :association> (question-first q) (question-second q))))
 
 (defgeneric question-variables (question)
-  (:method ((q comparison)) (list (question-outcome q) (question-by q)))
+  (:method ((q comparison))
+    (remove nil (list (question-outcome q) (question-by q) (question-within q))))
   (:method ((q association)) (list (question-first q) (question-second q))))
 
 (defgeneric describe-question (question stream)
   (:method ((q comparison) stream)
-    (format stream "compare ~(~a~) by ~(~a~) (estimand: ~(~a~))"
-            (question-outcome q) (question-by q) (question-estimand q)))
+    (format stream "compare ~(~a~) by ~(~a~)~@[ within ~(~a~)~] (aim: ~(~a~), estimand: ~(~a~), rule book: ~(~a~))"
+            (question-outcome q) (question-by q) (question-within q)
+            (question-aim q) (question-estimand q) (question-book q)))
   (:method ((q association) stream)
     (format stream "associate ~(~a~) with ~(~a~)" (question-first q) (question-second q))))
 
@@ -74,7 +93,9 @@ asks about means, :location about the location of the distributions."))
                     (list :categorical g)
                     (list (if (= (length counts) 2) :two-levels :several-levels) g))
               (when (every (lambda (c) (>= (cdr c) 30)) counts)
-                (list (list :large-groups> y g))))))
+                (list (list :large-groups> y g)))
+              (when (question-within q)
+                (list (list :categorical (question-within q)))))))
   (:method ((q association) (data cl-tibble:tbl))
     (let ((a (question-first q))
           (b (question-second q)))
@@ -85,7 +106,9 @@ asks about means, :location about the location of the distributions."))
 (defgeneric declared-facts (data)
   (:documentation "Facts declared about DATA or observed by checks.")
   (:method ((data cl-tibble:tbl)) nil)
-  (:method ((data statframe)) (mapcar #'second (frame-facts data))))
+  (:method ((data statframe))
+    (loop for (status proposition) in (frame-facts data)
+          unless (eq status :annotation) collect proposition)))
 
 (defgeneric question-facts (question)
   (:documentation "Every fact the planner gets for QUESTION.")
@@ -119,7 +142,7 @@ asks about means, :location about the location of the distributions."))
            (plans (find-plans :objects (question-objects q facts)
                               :facts facts
                               :goal (question-goal q)
-                              :domain (compile-rule-book book))))
+                              :domain (compile-rule-book book :goal (question-goal q)))))
       (make-instance 'analysis-result
                      :question q :facts facts
                      :plans (rank-guided-plans
@@ -127,33 +150,51 @@ asks about means, :location about the location of the distributions."))
                                        (guide-plan plan nil (lambda (name) (book-guidance book name))))
                                      plans))))))
 
-(defgeneric compare (data outcome &key by estimand)
+(defgeneric compare (data outcome &key by estimand aim within book)
   (:documentation "Does OUTCOME differ between the groups of BY? A plain tibble
 gets R's defaults with their assumptions named; a statframe's declarations
-change the plan.")
-  (:method ((data cl-tibble:tbl) outcome &key by (estimand :mean))
-    (answer (make-comparison data outcome :by by :estimand estimand))))
+change the plan, and a declared trial uses the clinical rule book. AIM:
+:difference, :equivalence, :baseline-balance, :effect-modification (with
+WITHIN).")
+  (:method ((data cl-tibble:tbl) outcome &key by (estimand :mean) (aim :difference) within book)
+    (answer (make-comparison data outcome :by by :estimand estimand :aim aim
+                                          :within within :book book))))
 
-(defgeneric associate (data first second)
+(defgeneric associate (data first second &key book)
   (:documentation "Are the categorical variables FIRST and SECOND associated?")
-  (:method ((data cl-tibble:tbl) first second)
-    (answer (make-association data first second))))
+  (:method ((data cl-tibble:tbl) first second &key book)
+    (answer (make-association data first second :book book))))
 
 ;;; Printing
 
-(defun step-r-code (book step)
-  "The R equivalent of a method STEP, from its rule's R-CODE template."
+(defun covariates-of (step facts)
+  "Declared baseline and stratification covariates for a method STEP whose
+arguments start with frame, outcome, grouping."
+  (destructuring-bind (&optional frame y g &rest more) (rest step)
+    (declare (ignore frame more))
+    (append (loop for f in facts when (and (eq (first f) :baseline-of>) (eq (third f) y))
+                  collect (second f))
+            (loop for f in facts when (and (eq (first f) :stratified-by>) (eq (third f) g))
+                  collect (fourth f)))))
+
+(defun replace-all (text placeholder value)
+  (loop for at = (search placeholder text)
+        while at
+        do (setf text (concatenate 'string (subseq text 0 at) value
+                                   (subseq text (+ at (length placeholder))))))
+  text)
+
+(defun step-r-code (book step &optional facts)
+  "The R equivalent of a method STEP, from its rule's R-CODE template;
+{covariates} lists the declared baseline and stratification covariates."
   (let ((rule (find-rule book (first step))))
     (when (and (typep rule 'method-rule) (rule-r-code rule))
-      (let ((code (rule-r-code rule)))
+      (let ((code (replace-all (rule-r-code rule) "{covariates}"
+                               (format nil "~{~(~a~)~^ + ~}" (covariates-of step facts)))))
         (loop for var in (parameter-variables (rule-parameters rule))
               for value in (rest step)
               for placeholder = (format nil "{~(~a~)}" (string-left-trim "?" (symbol-name var)))
-              do (loop for at = (search placeholder code)
-                       while at
-                       do (setf code (concatenate 'string (subseq code 0 at)
-                                                  (string-downcase (symbol-name value))
-                                                  (subseq code (+ at (length placeholder)))))))
+              do (setf code (replace-all code placeholder (string-downcase (symbol-name value)))))
         code))))
 
 (defmethod print-object ((result analysis-result) stream)
@@ -169,8 +210,12 @@ change the plan.")
                            i (getf plan :category) (getf plan :cost)
                            (mapcar #'term-string (getf plan :plan)))
                    (dolist (step (getf plan :plan))
-                     (let ((code (step-r-code book step)))
+                     (let ((code (step-r-code book step (result-facts result))))
                        (when code (format stream "~%       R: ~a" code))))
+                   (dolist (a (getf plan :assumptions))
+                     (when (eq (getf a :kind) :caveat)
+                       (format stream "~%       note: ~a~%       sources: ~{~a~^; ~}"
+                               (getf a :rule) (getf a :sources))))
                    (dolist (d (getf plan :departures))
                      (format stream "~%       departs from: ~a~%       sources: ~{~a~^; ~}"
                              (getf d :rule) (getf d :sources))))))))

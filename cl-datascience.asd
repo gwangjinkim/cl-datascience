@@ -24,7 +24,8 @@ from the Common Lisp tidyverse - rule books, statframes, question verbs."
                 :components ((:file "rules")
                              (:file "common-core")
                              (:file "frame")
-                             (:file "questions")))))
+                             (:file "questions")
+                             (:file "clinical")))))
 
 (defsystem "cl-datascience/tests"
   :depends-on ("cl-datascience" "cl-datascience/dsl" "fiveam")
@@ -35,5 +36,6 @@ from the Common Lisp tidyverse - rule books, statframes, question verbs."
                              (:file "stat101-tests")
                              (:file "guidance-tests")
                              (:file "clinical-tests")
-                             (:file "dsl-tests"))))
+                             (:file "dsl-tests")
+                             (:file "clinical-dsl-tests"))))
   :perform (test-op (o c) (symbol-call :cl-datascience/tests :run-all)))

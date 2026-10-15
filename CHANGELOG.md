@@ -3,6 +3,18 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT clinical rule book (src/dsl/clinical.lisp), including the
+  common core: baseline and stratification adjustment, change scores,
+  within-group tests, baseline tests, subgroups (interaction, exploratory
+  label), equivalence with a margin, dichotomisation, time-to-event
+  (log-rank, Cox, censoring). Rule books can include others
+  (`:includes`); `define-requirement` adds conditions to included
+  methods; `define-caveat` adds labels; declaration verbs
+  `declare-trial`, `declare-baseline`, `declare-survival`,
+  `declare-dichotomized`, `declare-margin`, `declare-prespecified`;
+  `compare` takes `:aim` and `:within`; a declared trial selects the
+  clinical book (`data-rule-book`). Results print caveat notes and R code
+  with the declared covariates.
 - EXPERIMENT docs/CLINICAL-RULES.md: ten clinical rules (C1-C10) from the
   EMA guideline on baseline covariates (2015), ICH E9(R1), CONSORT 2010,
   Bland and Altman (2011) and BMJ Statistics Notes, with what each
@@ -116,6 +128,10 @@
   the departure is labelled justified.
 
 ### Fixed
+- EXPERIMENT: questions plan only the rules relevant to their goal
+  (backward from the goal relation). With the full clinical book, wouldwork
+  explored about 21,000 states for a baseline question and failed inside
+  its graph search (IDB-IN-OPEN compared NIL with 1).
 - `find-plans` no longer changes the caller's `*package*`: staging reloads
   wouldwork, which set it to wouldwork's package, so forms read after a
   call (in a script or at the REPL) were read in the wrong package.

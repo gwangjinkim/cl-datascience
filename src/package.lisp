@@ -24,4 +24,8 @@
    #:question #:comparison #:association #:make-comparison #:make-association
    #:question-facts #:question-goal #:answer
    #:compare #:associate
-   #:analysis-result #:result-question #:result-plans #:result-facts))
+   #:analysis-result #:result-question #:result-plans #:result-facts
+   ;; clinical rule book
+   #:requirement-rule #:caveat-rule #:define-requirement #:define-caveat
+   #:data-rule-book #:declare-trial #:declare-baseline #:declare-survival
+   #:declare-dichotomized #:declare-margin #:declare-prespecified))

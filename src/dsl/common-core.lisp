@@ -15,8 +15,8 @@
 (in-package #:cl-datascience)
 
 (define-rule-book common-core
-  "Choosing a test for one outcome and one grouping, or two categorical
-variables: the rules shared by R packages that choose tests.")
+  :documentation "Choosing a test for one outcome and one grouping, or two
+categorical variables: the rules shared by R packages that choose tests.")
 
 ;;; Facts
 

@@ -14,14 +14,23 @@
 
 (defclass statframe (cl-tibble:tbl)
   ((facts :initarg :facts :initform nil :accessor frame-facts
-          :documentation "List of (status proposition): status :declared or :observed."))
+          :documentation "List of (status proposition): status :declared, :observed
+or :annotation (kept for reports, not given to the planner).")
+   (book :initarg :book :initform :common-core :accessor frame-book
+         :documentation "The rule book its questions use."))
   (:documentation "A tibble with facts about the study."))
+
+(defgeneric data-rule-book (data)
+  (:documentation "The rule book questions about DATA use by default.")
+  (:method ((data cl-tibble:tbl)) :common-core)
+  (:method ((data statframe)) (frame-book data)))
 
 (defgeneric as-statframe (data)
   (:documentation "DATA as a new statframe with the same columns and facts.")
   (:method ((data statframe))
     (let ((copy (cl-tibble:new-tibble data :class 'statframe)))
-      (setf (frame-facts copy) (copy-list (frame-facts data)))
+      (setf (frame-facts copy) (copy-list (frame-facts data))
+            (frame-book copy) (frame-book data))
       copy))
   (:method ((data cl-tibble:tbl))
     (cl-tibble:new-tibble data :class 'statframe)))
@@ -52,6 +61,46 @@ without regard to case.")
   (let ((frame data))
     (dolist (p propositions frame)
       (setf frame (declare-fact frame p :status :observed)))))
+
+(defun declare-facts (data propositions)
+  (let ((frame (as-statframe data)))
+    (dolist (p propositions frame)
+      (setf frame (declare-fact frame p)))))
+
+;;; Clinical declarations (rule book :clinical, src/dsl/clinical.lisp)
+
+(defun declare-trial (data &key arm stratified-by)
+  "DATA come from a randomised trial with one row per patient: ARM was
+randomised, stratified by the columns STRATIFIED-BY (one or a list). Its
+questions use the clinical rule book."
+  (let ((frame (declare-facts data
+                              (append (list (list :randomized arm)
+                                            (list :rows-independent :data))
+                                      (loop for s in (if (listp stratified-by) stratified-by (list stratified-by))
+                                            collect (list :stratified-by> :data arm s))))))
+    (setf (frame-book frame) :clinical)
+    frame))
+
+(defun declare-baseline (data &key of baseline)
+  "The column BASELINE is the outcome OF measured before randomisation."
+  (declare-fact data (list :baseline-of> baseline of)))
+
+(defun declare-survival (data &key time event)
+  "TIME is a time to an event, censored when the column EVENT is 0."
+  (declare-facts data (list (list :time-to-event time) (list :event-of> event time))))
+
+(defun declare-dichotomized (data variable &key from)
+  "VARIABLE was made by cutting the continuous column FROM into two groups."
+  (declare-fact data (list :dichotomized-from> variable from)))
+
+(defun declare-margin (data &key outcome by margin)
+  "A pre-specified equivalence margin for OUTCOME between the groups of BY."
+  (let ((frame (declare-fact data (list :equivalence-margin> outcome by))))
+    (declare-fact frame (list :margin outcome by margin) :status :annotation)))
+
+(defun declare-prespecified (data &rest subgroups)
+  "The subgroup analyses by SUBGROUPS were pre-specified in the protocol."
+  (declare-facts data (mapcar (lambda (s) (list :prespecified s)) subgroups)))
 
 ;;; Columns
 

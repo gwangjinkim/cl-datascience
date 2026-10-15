@@ -27,9 +27,13 @@
   (let ((key (keywordize name)))
     (rest (find key (read-forms (guidance-file)) :key #'first))))
 
-(defun step-kind (step)
-  (let ((name (symbol-name (first step))))
-    (cond ((eql 0 (search "ASSUME-" name)) :assumption)
+(defun step-kind (step &optional lookup)
+  "The kind of STEP: :assumption, :caveat or :departure (from LOOKUP's :kind,
+or from the step's name), or NIL for a method."
+  (let ((entry (and lookup (funcall lookup (first step))))
+        (name (symbol-name (first step))))
+    (cond ((getf entry :kind))
+          ((eql 0 (search "ASSUME-" name)) :assumption)
           ((eql 0 (search "DEPART-" name)) :departure))))
 
 (defun describe-step (step justified &optional (lookup #'guidance-entry))
@@ -39,6 +43,7 @@ guidance plist (:strength :rule :sources)."
     (unless entry
       (error "No guidance for ~s" (first step)))
     (list :step step
+          :kind (step-kind step lookup)
           :strength (getf entry :strength)
           :rule (getf entry :rule)
           :sources (getf entry :sources)
@@ -59,10 +64,10 @@ guidance plist (:strength :rule :sources)."
 (defun guide-plan (plan justified &optional (lookup #'guidance-entry))
   "PLAN as a plist (:plan :cost :category :assumptions :departures)."
   (let ((assumptions (loop for step in plan
-                           when (eq (step-kind step) :assumption)
+                           when (member (step-kind step lookup) '(:assumption :caveat))
                              collect (describe-step step justified lookup)))
         (departures (loop for step in plan
-                          when (eq (step-kind step) :departure)
+                          when (eq (step-kind step lookup) :departure)
                             collect (describe-step step justified lookup))))
     (list :plan plan
           :cost (reduce #'+ (mapcar #'step-cost (append assumptions departures)))

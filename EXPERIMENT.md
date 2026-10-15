@@ -79,3 +79,28 @@ Differences from the R packages: the estimand is part of the question; no
 assumption test gates the choice on the same data; large groups make
 normality unnecessary for mean-based tests; non-recommended methods stay
 available after a recorded departure.
+
+## Part 3: a clinical rule book from the literature
+
+`docs/CLINICAL-RULES.md` lists ten rules (C1-C10) taken from openly
+available sources: the EMA guideline on baseline covariates (2015), ICH
+E9(R1), CONSORT 2010, Bland and Altman (2011) and the BMJ Statistics Notes.
+`src/dsl/clinical.lisp` encodes them as a rule book that **includes** the
+common core:
+
+- `define-requirement` adds conditions to the included methods without
+  redefining them (every mean comparison must adjust for a declared
+  baseline and for stratification factors, or depart);
+- `define-caveat` adds labels a plan must carry (exploratory subgroups);
+- a statframe declared with `declare-trial` uses the clinical book;
+  `declare-baseline`, `declare-survival`, `declare-dichotomized`,
+  `declare-margin`, `declare-prespecified` add the facts;
+- `compare` takes `:aim` (`:difference`, `:equivalence`,
+  `:baseline-balance`, `:effect-modification` with `:within`).
+
+Planning only the rules relevant to the question (backward from the goal)
+keeps the search small; without it, the clinical book made wouldwork
+explore 21,000 states and fail inside its graph search.
+
+Examples: `examples/clinical/01-anorexia` and `02-colon` (survival::colon),
+with R references.
