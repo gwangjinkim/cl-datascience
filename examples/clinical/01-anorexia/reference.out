@@ -1,0 +1,35 @@
+# R version 4.6.1 (2026-06-24)
+
+## Data
+n_by_arm                           Cont=26  CBT=29  FT=17
+cor_pre_post                       0.3324062
+
+## Baseline: describe (recommended) or test (discouraged in randomized trials)
+baseline_mean_by_arm               Cont=81.55769  CBT=82.68966  FT=83.22941
+baseline_sd_by_arm                 Cont=5.707060  CBT=4.845495  FT=5.016693
+baseline_test_p                    0.5519287
+
+## A. Outcome only, baseline ignored: lm(Postwt ~ Treat)
+post_effect_CBT_vs_Cont            4.588859
+post_se_CBT_vs_Cont                1.968392
+post_effect_FT_vs_Cont             9.386425
+post_se_FT_vs_Cont                 2.273207
+post_residual_sd                   7.288126
+post_treat_p                       0.0004443275
+
+## B. Change score: lm(Postwt - Prewt ~ Treat)
+change_effect_CBT_vs_Cont          3.456897
+change_se_CBT_vs_Cont              2.033297
+change_effect_FT_vs_Cont           7.714706
+change_se_FT_vs_Cont               2.348163
+change_residual_sd                 7.528441
+change_treat_p                     0.006498653
+
+## C. ANCOVA: lm(Postwt ~ Prewt + Treat)
+ancova_effect_CBT_vs_Cont          4.097066
+ancova_se_CBT_vs_Cont              1.893493
+ancova_effect_FT_vs_Cont           8.660128
+ancova_se_FT_vs_Cont               2.193149
+ancova_residual_sd                 6.978183
+ancova_baseline_slope              0.4344612
+ancova_treat_p                     0.0008438398

@@ -3,6 +3,14 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT clinical tier (examples/clinical/, own uvr project and
+  domain): 01 anorexia (MASS), R reference for ANCOVA, change score and
+  outcome-only analyses and the baseline test. Guided plans: ANCOVA
+  recommended; change score (cost 3, Vickers and Altman 2001, Senn 2006)
+  and ignoring the baseline (cost 5, EMA 2015) discouraged; baseline
+  tables recommended and baseline significance tests discouraged
+  (CONSORT 2010, Altman 1985, Senn 1994); a pre-specified change score is
+  a justified departure.
 - EXPERIMENT `guided-plans` (src/guidance.lisp): every minimal plan with
   its cost, category (recommended, acceptable, justified departure,
   discouraged, against guidance), assumptions and departures, cheapest

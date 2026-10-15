@@ -41,3 +41,24 @@
  :rule "A variable set by design or randomized, or measured before another, is not explained by that other variable; doing so reverses the design."
  :sources ("Fisher (1935), The Design of Experiments"
            "ICH E9 (1998), Statistical principles for clinical trials"))
+
+;;; Departures from recommendations (clinical trials)
+
+(depart-adjust-for-baseline
+ :strength 5
+ :rule "When the outcome was also measured at baseline, adjust for the baseline value (analysis of covariance); leaving it out loses precision."
+ :sources ("EMA (2015), Guideline on adjustment for baseline covariates in clinical trials"
+           "Vickers and Altman (2001), BMJ 323:1123"))
+
+(depart-prefer-ancova
+ :strength 3
+ :rule "Prefer analysis of covariance to change from baseline: change scores are less precise unless baseline and outcome are highly correlated, and are affected by chance baseline imbalance."
+ :sources ("Vickers and Altman (2001), BMJ 323:1123"
+           "Senn (2006), Statistics in Medicine 25:4334"))
+
+(depart-no-baseline-tests
+ :strength 5
+ :rule "Do not test whether randomized groups differ at baseline: by construction any difference is due to chance. Describe the baseline instead."
+ :sources ("CONSORT 2010 explanation and elaboration (Moher et al.), item 15"
+           "Altman (1985), The Statistician 34:125"
+           "Senn (1994), Statistics in Medicine 13:1715"))

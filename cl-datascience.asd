@@ -22,5 +22,6 @@ what is declared about the data and what is asked."
                 :components ((:file "package")
                              (:file "planner-tests")
                              (:file "stat101-tests")
-                             (:file "guidance-tests"))))
+                             (:file "guidance-tests")
+                             (:file "clinical-tests"))))
   :perform (test-op (o c) (symbol-call :cl-datascience/tests :run-all)))

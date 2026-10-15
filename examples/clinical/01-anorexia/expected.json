@@ -1,0 +1,41 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "n_by_arm": {
+      "Cont": 26,
+      "CBT": 29,
+      "FT": 17
+    },
+    "cor_pre_post": 0.332406248158976,
+    "baseline_mean_by_arm": {
+      "Cont": 81.5576923076923,
+      "CBT": 82.6896551724138,
+      "FT": 83.2294117647059
+    },
+    "baseline_sd_by_arm": {
+      "Cont": 5.70706040458119,
+      "CBT": 4.84549458094735,
+      "FT": 5.0166927235334
+    },
+    "baseline_test_p": 0.551928743385651,
+    "post_effect_CBT_vs_Cont": 4.58885941644562,
+    "post_se_CBT_vs_Cont": 1.96839169683839,
+    "post_effect_FT_vs_Cont": 9.38642533936652,
+    "post_se_FT_vs_Cont": 2.27320679580251,
+    "post_residual_sd": 7.28812566954004,
+    "post_treat_p": 0.000444327487405832,
+    "change_effect_CBT_vs_Cont": 3.45689655172414,
+    "change_se_CBT_vs_Cont": 2.03329659742247,
+    "change_effect_FT_vs_Cont": 7.71470588235294,
+    "change_se_FT_vs_Cont": 2.34816253826251,
+    "change_residual_sd": 7.52844118844084,
+    "change_treat_p": 0.00649865298069969,
+    "ancova_effect_CBT_vs_Cont": 4.09706552807291,
+    "ancova_se_CBT_vs_Cont": 1.89349260696693,
+    "ancova_effect_FT_vs_Cont": 8.66012818099169,
+    "ancova_se_FT_vs_Cont": 2.19314941164305,
+    "ancova_residual_sd": 6.978183039175,
+    "ancova_baseline_slope": 0.434461150360904,
+    "ancova_treat_p": 0.000843839823857487
+  }
+}
