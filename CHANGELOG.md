@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT.md: branch experiment/guided-rules tests whether rules can
+  guide (ranked, labelled plans with costs and sources) instead of forbid.
+  The branch is not to be merged.
 - docs/DESIGN.md: design document for the verbs and the DSL (summary,
   principles, architecture, the verbs in their layers with signatures,
   assumption modes, results, defining forms for method authors,

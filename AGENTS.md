@@ -1,5 +1,8 @@
 # Agents guide - cl-datascience
 
+**Branch experiment/guided-rules is an experiment: never merge it into
+main or examples/stat101.** See EXPERIMENT.md.
+
 Common Lisp Data Science (CLDS): tools for a philosophy of data science
 practice, enforced through a Common Lisp DSL (see README.md). Work is
 examples first: textbook analyses are written before the DSL, to find out
