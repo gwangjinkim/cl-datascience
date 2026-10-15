@@ -70,6 +70,9 @@
   (test first, both Lisp setups, uvr for R, small commits, this changelog).
 
 ### Fixed
+- `find-plans` no longer changes the caller's `*package*`: staging reloads
+  wouldwork, which set it to wouldwork's package, so forms read after a
+  call (in a script or at the REPL) were read in the wrong package.
 - Actions with several parameters of one type use wouldwork's `product`
   header. With the default, an example with fewer objects than parameters
   (example 00: two variables, a four-parameter action) crashed the planner
