@@ -1,0 +1,24 @@
+# R version 4.6.1 (2026-06-24)
+
+## Data
+n_by_arm                           Obs=315  Lev=310  Lev+5FU=304
+deaths_by_arm                      Obs=168  Lev=161  Lev+5FU=123
+censored_share                     0.5134553
+
+## A. Log-rank test (recommended comparison of survival)
+logrank_chisq                      11.68309
+logrank_p                          0.002904348
+
+## B. Cox regression and the proportional-hazards check
+cox_hr                             rxLev=0.9737142  rxLev+5FU=0.6895540
+cox_hr_ci_lev5fu                   2.5 %=0.5463673  97.5 %=0.8702657
+ph_test_global_p                   0.4769434
+
+## C. Ignoring censoring: t-test on follow-up times (invalid)
+naive_mean_time_by_arm             Obs=1599.981  Lev+5FU=1798.845
+naive_time_ttest_p                 0.004105831
+
+## D. Subgroups by sex: interaction test vs separate tests
+interaction_p                      0.02144351
+separate_logrank_p_female          0.6191167
+separate_logrank_p_male            0.0001432341

@@ -33,3 +33,21 @@ ancova_se_FT_vs_Cont               2.193149
 ancova_residual_sd                 6.978183
 ancova_baseline_slope              0.4344612
 ancova_treat_p                     0.0008438398
+
+## D. Within-group tests against baseline (Bland and Altman 2011: invalid)
+within_Cont_mean_change            -0.45
+within_Cont_paired_p               0.7763071
+within_CBT_mean_change             3.006897
+within_CBT_paired_p                0.0350226
+within_FT_mean_change              7.264706
+within_FT_paired_p                 0.0007002531
+
+## E. Dichotomised outcome: gained weight yes/no (Altman and Royston 2006)
+gained_by_arm                      Cont=11  CBT=18  FT=13
+gained_fisher_p                    0.07554127
+gained_chisq_expected_min          7.083333
+
+## F. Equivalence of CBT and control within 2 lb (two one-sided tests, 90% CI)
+cbt_vs_cont_ci90_cont_minus_cbt    -7.625954  -1.551765
+equivalent_within_2lb              FALSE
+superiority_p_cbt_vs_cont          0.0146899

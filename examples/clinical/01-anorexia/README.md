@@ -31,6 +31,19 @@ the least precise, as Vickers and Altman (2001) explain; ANCOVA has the
 smallest standard errors. The baseline test gives p = 0.55, which in a
 randomized trial says nothing about whether the comparison is fair.
 
+More from the reference (sections D to F):
+
+| Analysis | Result |
+|---|---|
+| paired t-test against baseline within each arm (invalid) | Cont p = 0.78, CBT p = 0.035, FT p = 0.0007 |
+| weight gained yes or no (dichotomised), Fisher's exact test | p = 0.076, against p = 0.0008 for ANCOVA on the weights |
+| CBT vs control, 90% confidence interval for the difference | -7.6 to -1.6 lb: not equivalent within 2 lb |
+
+Reading "control not significant, CBT significant" as evidence that CBT
+works is the invalid comparison of Bland and Altman (2011); cutting the
+weights into gained / not gained loses most of the evidence (Altman and
+Royston 2006).
+
 ## What the guided planner says (plan.lisp, tests/clinical-tests.lisp)
 
 | Known | Asked | Plans, in ranking order |
@@ -55,3 +68,20 @@ from baseline), which is then recorded.
   task.
 - The strengths (3 for change scores, 5 for ignoring the baseline) are a
   first proposal. The sources agree on the order, not on numbers.
+
+## In the CLOS DSL (tests/clinical-dsl-tests.lisp)
+
+```lisp
+(-> (read-csv "data.csv")
+    (declare-trial :arm :treat)
+    (declare-baseline :of :postwt :baseline :prewt)
+    (compare :postwt :by :treat))
+;; 1. acceptable (cost 1): assume-normality, adjusted-regression
+;;    R: lm(postwt ~ treat + prewt, data = data)
+;; 2. discouraged (cost 4): depart-unadjusted-change, change-score-test
+;; 3. discouraged (cost 6): depart-baseline-adjustment, welch-anova
+;; 4. discouraged (cost 7): ... one-way-anova
+;; 5. against guidance (cost 20): depart-within-group-comparison, within-group-tests
+```
+
+Rules applied: C1, C2, C4, C5, C8, C9 in docs/CLINICAL-RULES.md.

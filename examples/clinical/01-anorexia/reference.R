@@ -43,4 +43,25 @@ effects("ancova", ancova)
 report("ancova_baseline_slope", coef(ancova)[["Prewt"]])
 report("ancova_treat_p", anova(lm(Postwt ~ Prewt, data = d), ancova)[2, "Pr(>F)"])
 
+section("D. Within-group tests against baseline (Bland and Altman 2011: invalid)")
+for (arm in levels(d$Treat)) {
+  w <- d[d$Treat == arm, ]
+  report(paste0("within_", arm, "_mean_change"), mean(w$Postwt - w$Prewt))
+  report(paste0("within_", arm, "_paired_p"), t.test(w$Postwt, w$Prewt, paired = TRUE)$p.value)
+}
+
+section("E. Dichotomised outcome: gained weight yes/no (Altman and Royston 2006)")
+d$gained <- ifelse(d$Postwt > d$Prewt, "yes", "no")
+tab <- table(d$Treat, d$gained)
+report("gained_by_arm", c(tab[, "yes"]))
+report("gained_fisher_p", fisher.test(tab)$p.value)
+report("gained_chisq_expected_min", min(suppressWarnings(chisq.test(tab))$expected))
+
+section("F. Equivalence of CBT and control within 2 lb (two one-sided tests, 90% CI)")
+two <- droplevels(d[d$Treat %in% c("Cont", "CBT"), ])
+ci90 <- t.test(Postwt ~ Treat, data = two, conf.level = 0.90)$conf.int[1:2]
+report("cbt_vs_cont_ci90_cont_minus_cbt", ci90)
+report("equivalent_within_2lb", all(abs(ci90) < 2))
+report("superiority_p_cbt_vs_cont", t.test(Postwt ~ Treat, data = two)$p.value)
+
 finish()

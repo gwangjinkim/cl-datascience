@@ -1,0 +1,35 @@
+{
+  "r_version": "R version 4.6.1 (2026-06-24)",
+  "values": {
+    "n_by_arm": {
+      "Obs": 315,
+      "Lev": 310,
+      "Lev+5FU": 304
+    },
+    "deaths_by_arm": {
+      "Obs": 168,
+      "Lev": 161,
+      "Lev+5FU": 123
+    },
+    "censored_share": 0.513455328310011,
+    "logrank_chisq": 11.6830927106392,
+    "logrank_p": 0.0029043479975861,
+    "cox_hr": {
+      "rxLev": 0.973714184581391,
+      "rxLev+5FU": 0.689553994104623
+    },
+    "cox_hr_ci_lev5fu": {
+      "2.5 %": 0.546367289536905,
+      "97.5 %": 0.87026569835221
+    },
+    "ph_test_global_p": 0.476943445126333,
+    "naive_mean_time_by_arm": {
+      "Obs": 1599.98095238095,
+      "Lev+5FU": 1798.84539473684
+    },
+    "naive_time_ttest_p": 0.00410583054287574,
+    "interaction_p": 0.0214435056890657,
+    "separate_logrank_p_female": 0.619116718680946,
+    "separate_logrank_p_male": 0.000143234102788349
+  }
+}

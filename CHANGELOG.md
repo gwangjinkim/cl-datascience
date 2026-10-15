@@ -3,6 +3,13 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT docs/CLINICAL-RULES.md: ten clinical rules (C1-C10) from the
+  EMA guideline on baseline covariates (2015), ICH E9(R1), CONSORT 2010,
+  Bland and Altman (2011) and BMJ Statistics Notes, with what each
+  recommends, what departs from it, its strength and sources. R references:
+  anorexia gains within-group tests, a dichotomised outcome and an
+  equivalence interval; new example 02 colon (survival::colon): log-rank,
+  Cox, proportional hazards, censoring ignored, subgroup interaction.
 - EXPERIMENT CLOS DSL (system `cl-datascience/dsl`, src/dsl/): rule books
   of CLOS rule objects compiled to wouldwork; the common-core rule book
   (Welch and Student t, Wilcoxon, paired t, signed-rank, Welch and

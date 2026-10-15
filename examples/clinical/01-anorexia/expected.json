@@ -36,6 +36,22 @@
     "ancova_se_FT_vs_Cont": 2.19314941164305,
     "ancova_residual_sd": 6.978183039175,
     "ancova_baseline_slope": 0.434461150360904,
-    "ancova_treat_p": 0.000843839823857487
+    "ancova_treat_p": 0.000843839823857487,
+    "within_Cont_mean_change": -0.449999999999999,
+    "within_Cont_paired_p": 0.776307062219417,
+    "within_CBT_mean_change": 3.00689655172414,
+    "within_CBT_paired_p": 0.0350225975621888,
+    "within_FT_mean_change": 7.26470588235294,
+    "within_FT_paired_p": 0.000700253105600539,
+    "gained_by_arm": {
+      "Cont": 11,
+      "CBT": 18,
+      "FT": 13
+    },
+    "gained_fisher_p": 0.0755412724798056,
+    "gained_chisq_expected_min": 7.08333333333333,
+    "cbt_vs_cont_ci90_cont_minus_cbt": [-7.6259541944174, -1.55176463847386],
+    "equivalent_within_2lb": false,
+    "superiority_p_cbt_vs_cont": 0.0146899036377268
   }
 }
