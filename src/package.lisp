@@ -28,4 +28,6 @@
    ;; clinical rule book
    #:requirement-rule #:caveat-rule #:define-requirement #:define-caveat
    #:data-rule-book #:declare-trial #:declare-baseline #:declare-survival
-   #:declare-dichotomized #:declare-margin #:declare-prespecified))
+   #:declare-dichotomized #:declare-margin #:declare-prespecified
+   ;; general rule book
+   #:declare-clustered #:estimation #:modelling #:estimate #:model))

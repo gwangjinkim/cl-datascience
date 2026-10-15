@@ -38,6 +38,28 @@ WITHIN?)."))
    (second :initarg :second :reader question-second))
   (:documentation "Are two categorical variables associated?"))
 
+(defclass estimation (question)
+  ((variable :initarg :variable :reader question-variable)
+   (of :initarg :of :reader question-of))
+  (:documentation "What share of VARIABLE takes the value OF, and how precisely is it known?"))
+
+(defclass modelling (question)
+  ((outcome :initarg :outcome :reader question-outcome)
+   (predictors :initarg :predictors :reader question-predictors)
+   (purpose :initarg :purpose :initform :explanation :reader question-purpose)
+   (selection :initarg :selection :initform nil :reader question-selection))
+  (:documentation "A regression model for OUTCOME with PREDICTORS. PURPOSE
+:explanation (default) or :prediction; SELECTION true asks for a smaller model."))
+
+(defun make-estimation (data variable &key of book)
+  (make-instance 'estimation :data data :book (or book (data-rule-book data))
+                             :variable (keywordize variable) :of of))
+
+(defun make-modelling (data outcome &key with (purpose :explanation) selection book)
+  (make-instance 'modelling :data data :book (or book (data-rule-book data))
+                            :outcome (keywordize outcome) :predictors (keywordize with)
+                            :purpose purpose :selection selection))
+
 (defun make-comparison (data outcome &key by (estimand :mean) (aim :difference) within book)
   (make-instance 'comparison :data data :book (or book (data-rule-book data))
                              :estimand estimand :aim aim :within (keywordize within)
@@ -61,17 +83,27 @@ WITHIN?)."))
         (:baseline-balance (list :baseline-compared> y g))
         (:equivalence (list :equivalence-shown> y g))
         (:effect-modification (list :effect-modification> y g (question-within q)))
+        (:pairwise (list :pairwise-compared> y g))
         (:difference
          (cond ((survival-outcome-p q) (list :survival-difference> y g))
                ((eq (question-estimand q) :location) (list :location-difference> y g))
                (t (list :mean-difference> y g)))))))
   (:method ((q association))
-    (list :association> (question-first q) (question-second q))))
+    (list :association> (question-first q) (question-second q)))
+  (:method ((q estimation))
+    (list :proportion-estimated (question-variable q)))
+  (:method ((q modelling))
+    (list (cond ((eq (question-purpose q) :prediction) :performance-estimated)
+                ((question-selection q) :reduced-model)
+                (t :model-fitted))
+          (question-outcome q))))
 
 (defgeneric question-variables (question)
   (:method ((q comparison))
     (remove nil (list (question-outcome q) (question-by q) (question-within q))))
-  (:method ((q association)) (list (question-first q) (question-second q))))
+  (:method ((q association)) (list (question-first q) (question-second q)))
+  (:method ((q estimation)) (list (question-variable q)))
+  (:method ((q modelling)) (cons (question-outcome q) (copy-list (question-predictors q)))))
 
 (defgeneric describe-question (question stream)
   (:method ((q comparison) stream)
@@ -79,7 +111,13 @@ WITHIN?)."))
             (question-outcome q) (question-by q) (question-within q)
             (question-aim q) (question-estimand q) (question-book q)))
   (:method ((q association) stream)
-    (format stream "associate ~(~a~) with ~(~a~)" (question-first q) (question-second q))))
+    (format stream "associate ~(~a~) with ~(~a~)" (question-first q) (question-second q)))
+  (:method ((q estimation) stream)
+    (format stream "estimate the share of ~a in ~(~a~)" (question-of q) (question-variable q)))
+  (:method ((q modelling) stream)
+    (format stream "model ~(~a~) with ~{~(~a~)~^, ~} (purpose: ~(~a~)~:[~;, selection~], rule book: ~(~a~))"
+            (question-outcome q) (question-predictors q) (question-purpose q)
+            (question-selection q) (question-book q))))
 
 ;;; Facts
 
@@ -95,7 +133,35 @@ WITHIN?)."))
               (when (every (lambda (c) (>= (cdr c) 30)) counts)
                 (list (list :large-groups> y g)))
               (when (question-within q)
-                (list (list :categorical (question-within q)))))))
+                (list (list :categorical (question-within q))))
+              (when (column-missing-p data y)
+                (list (list :missing-values y))))))
+  (:method ((q estimation) (data cl-tibble:tbl))
+    (let* ((v (question-variable q))
+           (values (column-values data v))
+           (successes (count-if (lambda (x) (string-equal (princ-to-string x)
+                                                          (princ-to-string (question-of q))))
+                                values))
+           (failures (- (length values) successes)))
+      (append (list (list :categorical v))
+              (when (< (min successes failures) 10)
+                (list (list :few-successes v))))))
+  (:method ((q modelling) (data cl-tibble:tbl))
+    (let* ((y (question-outcome q))
+           (values (column-values data y))
+           (n (length values))
+           (levels (group-counts data y))
+           (binary (= (length levels) 2))
+           (m (if binary
+                  (let ((q-share (/ (reduce #'min (mapcar #'cdr levels)) n)))
+                    (* 3 n q-share (- 1 q-share)))
+                  n))
+           (p (loop for x in (question-predictors q)
+                    sum (if (numeric-column-p data x) 1 (1- (length (group-counts data x)))))))
+      (append (list (list (if binary :binary-outcome :numeric) y))
+              (mapcar (lambda (x) (list :predictor> x y)) (question-predictors q))
+              (when (> p (/ m 15))
+                (list (list :few-observations-per-parameter y))))))
   (:method ((q association) (data cl-tibble:tbl))
     (let ((a (question-first q))
           (b (question-second q)))
@@ -160,6 +226,19 @@ WITHIN).")
     (answer (make-comparison data outcome :by by :estimand estimand :aim aim
                                           :within within :book book))))
 
+(defgeneric estimate (data variable &key of book)
+  (:documentation "The share of VARIABLE taking the value OF, with its interval.")
+  (:method ((data cl-tibble:tbl) variable &key of book)
+    (answer (make-estimation data variable :of of :book book))))
+
+(defgeneric model (data outcome &key with purpose selection book)
+  (:documentation "A regression model of OUTCOME on the predictors WITH.
+PURPOSE :explanation (default) or :prediction; SELECTION true asks for a
+smaller model.")
+  (:method ((data cl-tibble:tbl) outcome &key with (purpose :explanation) selection book)
+    (answer (make-modelling data outcome :with with :purpose purpose
+                                         :selection selection :book book))))
+
 (defgeneric associate (data first second &key book)
   (:documentation "Are the categorical variables FIRST and SECOND associated?")
   (:method ((data cl-tibble:tbl) first second &key book)
@@ -189,8 +268,14 @@ arguments start with frame, outcome, grouping."
 {covariates} lists the declared baseline and stratification covariates."
   (let ((rule (find-rule book (first step))))
     (when (and (typep rule 'method-rule) (rule-r-code rule))
-      (let ((code (replace-all (rule-r-code rule) "{covariates}"
-                               (format nil "~{~(~a~)~^ + ~}" (covariates-of step facts)))))
+      (let ((code (replace-all
+                   (replace-all (rule-r-code rule) "{covariates}"
+                                (format nil "~{~(~a~)~^ + ~}" (covariates-of step facts)))
+                   "{predictors}"
+                   (format nil "~{~(~a~)~^ + ~}"
+                           (loop for f in facts
+                                 when (and (eq (first f) :predictor>) (eq (third f) (third step)))
+                                   collect (second f))))))
         (loop for var in (parameter-variables (rule-parameters rule))
               for value in (rest step)
               for placeholder = (format nil "{~(~a~)}" (string-left-trim "?" (symbol-name var)))

@@ -104,3 +104,20 @@ explore 21,000 states and fail inside its graph search.
 
 Examples: `examples/clinical/01-anorexia` and `02-colon` (survival::colon),
 with R references.
+
+## Part 4: rules from textbooks
+
+`docs/GENERAL-RULES.md` lists seven rules (G1-G7) from high-quality,
+readable sources: Introduction to Modern Statistics (OpenIntro, 2nd ed.),
+Harrell's Regression Modeling Strategies (chapter 4), An Introduction to
+Statistical Learning (2nd ed.), Regression and Other Stories, the EMA
+guidelines on multiplicity (2002) and missing data (2010), and Sterne et
+al. (2009) on multiple imputation. `src/dsl/general.lisp` encodes them as
+the general rule book: it includes the common core, is the default for
+plain tibbles, and is included by the clinical book.
+
+New in the DSL: `estimate` (a proportion), `model` (a regression model,
+with `:purpose :prediction` or `:selection t`), `compare ... :aim
+:pairwise`, `declare-clustered`; missing outcome values and the number of
+observations per model parameter are found in the data. Examples in
+`examples/general/` with R references (uvr, with mice).

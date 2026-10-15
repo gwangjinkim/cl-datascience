@@ -9,7 +9,7 @@
 (in-package #:cl-datascience)
 
 (define-rule-book clinical
-  :includes (common-core)
+  :includes (general)
   :documentation "Randomised clinical trials: baseline and stratification
 adjustment, within-group fallacies, baseline tests, subgroups, equivalence,
 dichotomisation, time-to-event outcomes.")

@@ -16,13 +16,13 @@
   ((facts :initarg :facts :initform nil :accessor frame-facts
           :documentation "List of (status proposition): status :declared, :observed
 or :annotation (kept for reports, not given to the planner).")
-   (book :initarg :book :initform :common-core :accessor frame-book
+   (book :initarg :book :initform :general :accessor frame-book
          :documentation "The rule book its questions use."))
   (:documentation "A tibble with facts about the study."))
 
 (defgeneric data-rule-book (data)
   (:documentation "The rule book questions about DATA use by default.")
-  (:method ((data cl-tibble:tbl)) :common-core)
+  (:method ((data cl-tibble:tbl)) :general)
   (:method ((data statframe)) (frame-book data)))
 
 (defgeneric as-statframe (data)
@@ -51,6 +51,11 @@ without regard to case.")
 (defun declare-independent (data)
   "The rows are independent observations."
   (declare-fact data (list :rows-independent :data)))
+
+(defun declare-clustered (data &key by)
+  "Rows come in clusters of the column BY (repeated measurements on a unit,
+patients within centres); rows of a cluster are not independent."
+  (declare-fact data (list :clustered-by> :data by)))
 
 (defun declare-time-ordered (data)
   "The rows are in time order (consecutive measurements)."
@@ -114,6 +119,11 @@ questions use the clinical rule book."
   "The non-missing values of column KEY, as a list."
   (remove-if #'cl-vctrs-lite:na-p
              (cl-vctrs-lite:col->list (cl-tibble:tbl-col data (column-name data key)))))
+
+(defun column-missing-p (data key)
+  "Does column KEY contain missing values?"
+  (some #'cl-vctrs-lite:na-p
+        (cl-vctrs-lite:col->list (cl-tibble:tbl-col data (column-name data key)))))
 
 (defun numeric-column-p (data key)
   (member (symbol-name (cl-vctrs-lite:col-type (cl-tibble:tbl-col data (column-name data key))))

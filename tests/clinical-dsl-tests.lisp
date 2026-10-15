@@ -67,7 +67,7 @@
 
 (test a-declared-trial-uses-the-clinical-book
   (is (eq :clinical (data-rule-book (anorexia-trial))))
-  (is (eq :common-core (data-rule-book (anorexia-data)))))
+  (is (eq :general (data-rule-book (anorexia-data)))))
 
 ;;; C1, C2, C4: baseline
 

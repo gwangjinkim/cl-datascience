@@ -3,6 +3,17 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT general rule book (src/dsl/general.lisp): the default for
+  plain tibbles, including the common core and included by the clinical
+  book. Rules: Wilson, exact and Wald intervals with the success-failure
+  condition; adjusted pairwise comparisons (Games-Howell, Holm, Tukey);
+  clustered rows (mixed model, summary measures; `declare-clustered`);
+  missing outcome values (multiple imputation, complete cases as an
+  assumption, single imputation against guidance); regression models with
+  the m/15 limit, penalisation, linearity as an assumption, splines; data
+  reduction instead of stepwise selection; validated predictive
+  performance. New verbs `estimate` and `model`; `compare` gains
+  `:aim :pairwise`; results fill {predictors} in R code.
 - EXPERIMENT docs/GENERAL-RULES.md: seven rules (G1-G7) from Introduction
   to Modern Statistics (2nd ed.), Harrell's Regression Modeling Strategies,
   An Introduction to Statistical Learning (2nd ed.), Regression and Other

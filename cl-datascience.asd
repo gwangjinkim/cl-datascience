@@ -25,6 +25,7 @@ from the Common Lisp tidyverse - rule books, statframes, question verbs."
                              (:file "common-core")
                              (:file "frame")
                              (:file "questions")
+                             (:file "general")
                              (:file "clinical")))))
 
 (defsystem "cl-datascience/tests"
@@ -37,5 +38,6 @@ from the Common Lisp tidyverse - rule books, statframes, question verbs."
                              (:file "guidance-tests")
                              (:file "clinical-tests")
                              (:file "dsl-tests")
-                             (:file "clinical-dsl-tests"))))
+                             (:file "clinical-dsl-tests")
+                             (:file "general-dsl-tests"))))
   :perform (test-op (o c) (symbol-call :cl-datascience/tests :run-all)))
