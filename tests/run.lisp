@@ -22,6 +22,16 @@
   (when ocicl
     (setf (symbol-value (find-symbol "*DOWNLOAD*" ocicl)) nil)))
 
+;; The Common Lisp tidyverse (cl-tibble, cl-dplyr, ...) is found as local
+;; projects in ~/projects/cl/ (Roswell's init file already adds it), or in the
+;; directory named by CLDS_TIDYVERSE_DIR.
+(let ((dir (uiop:ensure-directory-pathname
+            (or (uiop:getenv "CLDS_TIDYVERSE_DIR")
+                (merge-pathnames "projects/cl/" (user-homedir-pathname))))))
+  (when (probe-file dir)
+    (pushnew dir ql:*local-project-directories* :test #'equal)
+    (ql:register-local-projects)))
+
 ;; Find cl-datascience.asd in this checkout, whatever the current directory.
 (push (uiop:pathname-parent-directory-pathname
        (uiop:pathname-directory-pathname *load-truename*))

@@ -3,6 +3,16 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT CLOS DSL (system `cl-datascience/dsl`, src/dsl/): rule books
+  of CLOS rule objects compiled to wouldwork; the common-core rule book
+  (Welch and Student t, Wilcoxon, paired t, signed-rank, Welch and
+  classical ANOVA, Kruskal-Wallis, chi-square, Fisher's exact test, with
+  assumptions and departures and their sources); `statframe` as a
+  subclass of `cl-tibble:tbl` with declaration verbs; generic question
+  verbs `compare` and `associate` on tibbles, returning an
+  `analysis-result`. Works in cl-dplyr's `->` pipeline. tests/run.lisp
+  finds the Common Lisp tidyverse in ~/projects/cl (or
+  CLDS_TIDYVERSE_DIR).
 - EXPERIMENT docs/PRIOR-ART-R.md: how visStatistics, testflow, rstatix and
   AssumpSure choose tests (from their vignettes, help pages and code), the
   rules they share, their own caveats about pre-testing assumptions, and

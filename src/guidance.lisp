@@ -32,11 +32,12 @@
     (cond ((eql 0 (search "ASSUME-" name)) :assumption)
           ((eql 0 (search "DEPART-" name)) :departure))))
 
-(defun describe-step (step justified)
-  "STEP with its guidance, as a plist."
-  (let ((entry (guidance-entry (first step))))
+(defun describe-step (step justified &optional (lookup #'guidance-entry))
+  "STEP with its guidance, as a plist. LOOKUP maps a step name to its
+guidance plist (:strength :rule :sources)."
+  (let ((entry (funcall lookup (first step))))
     (unless entry
-      (error "No guidance for ~s in ~a" (first step) (guidance-file)))
+      (error "No guidance for ~s" (first step)))
     (list :step step
           :strength (getf entry :strength)
           :rule (getf entry :rule)
@@ -55,14 +56,14 @@
           (assumptions :acceptable)
           (t :recommended))))
 
-(defun guide-plan (plan justified)
+(defun guide-plan (plan justified &optional (lookup #'guidance-entry))
   "PLAN as a plist (:plan :cost :category :assumptions :departures)."
   (let ((assumptions (loop for step in plan
                            when (eq (step-kind step) :assumption)
-                             collect (describe-step step justified)))
+                             collect (describe-step step justified lookup)))
         (departures (loop for step in plan
                           when (eq (step-kind step) :departure)
-                            collect (describe-step step justified))))
+                            collect (describe-step step justified lookup))))
     (list :plan plan
           :cost (reduce #'+ (mapcar #'step-cost (append assumptions departures)))
           :category (plan-category assumptions departures)
@@ -78,8 +79,13 @@ category, assumptions and departures; cheapest first, then shortest."
                             :goal (getf problem :goal)
                             :domain (getf problem :domain)
                             :depth-cutoff depth-cutoff)))
-    (stable-sort (mapcar (lambda (plan) (guide-plan plan (getf problem :justified))) plans)
-                 (lambda (a b)
-                   (or (< (getf a :cost) (getf b :cost))
-                       (and (= (getf a :cost) (getf b :cost))
-                            (< (length (getf a :plan)) (length (getf b :plan)))))))))
+    (rank-guided-plans
+     (mapcar (lambda (plan) (guide-plan plan (getf problem :justified))) plans))))
+
+(defun rank-guided-plans (guided)
+  "GUIDED plans cheapest first, then shortest."
+  (stable-sort (copy-list guided)
+               (lambda (a b)
+                 (or (< (getf a :cost) (getf b :cost))
+                     (and (= (getf a :cost) (getf b :cost))
+                          (< (length (getf a :plan)) (length (getf b :plan))))))))

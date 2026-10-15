@@ -43,3 +43,39 @@ its cost, category, assumptions and departures, cheapest first.
 - Are the labels and reasons understandable to an analyst?
 - Does the search stay fast as departures multiply the plans?
 - Which costs had to be invented, and are they defensible?
+
+## Part 2: a CLOS DSL on tidyverse tibbles
+
+The common core of four R packages that choose tests (docs/PRIOR-ART-R.md)
+re-encoded as a **rule book** of CLOS objects (src/dsl/), used from tibbles
+of the Common Lisp tidyverse:
+
+```lisp
+(-> (read-csv "sleep.csv")
+    (declare-paired :id :id :within :group)
+    (compare :extra :by :group))
+;; => #<ANALYSIS-RESULT compare extra by group (estimand: mean)
+;;      1. acceptable (cost 1): assume-normality, paired-t-test ...
+;;         R: with(data, t.test(..., paired = TRUE))>
+```
+
+- Rules: `rule` with subclasses `relation-rule`, `method-rule`,
+  `assumption-rule`, `departure-rule`, `constraint-rule`, collected in a
+  `rule-book`; defining macros `define-method`, `define-assumption`,
+  `define-departure`, ...; generic functions `rule-precondition`,
+  `rule-effects`, `rule->wouldwork` compile a book into a planner domain.
+- Data: `statframe`, a CLOS subclass of `cl-tibble:tbl`, carries declared
+  and observed facts; declaration verbs (`declare-paired`,
+  `declare-observed`, ...) take the data first and return a new statframe.
+- Questions: `comparison` and `association` objects; `compare` and
+  `associate` are generic functions on tibbles; facts come from
+  `role-facts` (roles and values, any tibble) and `declared-facts`
+  (statframes only), chosen by dispatch.
+- Answers: `analysis-result` with every minimal plan ranked and labelled,
+  printed with the R equivalent of each method and the rule and sources of
+  each departure.
+
+Differences from the R packages: the estimand is part of the question; no
+assumption test gates the choice on the same data; large groups make
+normality unnecessary for mean-based tests; non-recommended methods stay
+available after a recorded departure.

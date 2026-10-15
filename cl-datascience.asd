@@ -15,13 +15,25 @@ what is declared about the data and what is asked."
                              (:file "guidance"))))
   :in-order-to ((test-op (test-op "cl-datascience/tests"))))
 
+(defsystem "cl-datascience/dsl"
+  :description "EXPERIMENT (experiment/guided-rules): the CLOS DSL on tibbles
+from the Common Lisp tidyverse - rule books, statframes, question verbs."
+  :depends-on ("cl-datascience" "cl-tidyverse")
+  :serial t
+  :components ((:module "src/dsl"
+                :components ((:file "rules")
+                             (:file "common-core")
+                             (:file "frame")
+                             (:file "questions")))))
+
 (defsystem "cl-datascience/tests"
-  :depends-on ("cl-datascience" "fiveam")
+  :depends-on ("cl-datascience" "cl-datascience/dsl" "fiveam")
   :serial t
   :components ((:module "tests"
                 :components ((:file "package")
                              (:file "planner-tests")
                              (:file "stat101-tests")
                              (:file "guidance-tests")
-                             (:file "clinical-tests"))))
+                             (:file "clinical-tests")
+                             (:file "dsl-tests"))))
   :perform (test-op (o c) (symbol-call :cl-datascience/tests :run-all)))
