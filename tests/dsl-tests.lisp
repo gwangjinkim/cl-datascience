@@ -135,3 +135,16 @@
                              (declare-paired :id :id :within :group)
                              (compare :extra :by :group))))
     (is (find :paired-t-test (steps-of (best result)) :key #'first))))
+
+(test clds-user-reads-like-the-tidyverse
+  ;; One package for analyses: the tidyverse (read-csv, ->, filter, ...)
+  ;; and the DSL (declare-..., compare, ...), without prefixes.
+  (let* ((package (find-package :clds-user))
+         (file (namestring (asdf:system-relative-pathname
+                            :cl-datascience "examples/stat101/01-sleep/data.csv")))
+         (form (let ((*package* package))
+                 (read-from-string
+                  (format nil "(-> (read-csv ~s) (declare-paired :id :id :within :group) (compare :extra :by :group))"
+                          file)))))
+    (is (not (null package)))
+    (is (find :paired-t-test (steps-of (best (eval form))) :key #'first))))

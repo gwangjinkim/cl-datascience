@@ -26,7 +26,8 @@ from the Common Lisp tidyverse - rule books, statframes, question verbs."
                              (:file "frame")
                              (:file "questions")
                              (:file "general")
-                             (:file "clinical")))))
+                             (:file "clinical")
+                             (:file "user")))))
 
 (defsystem "cl-datascience/tests"
   :depends-on ("cl-datascience" "cl-datascience/dsl" "fiveam")

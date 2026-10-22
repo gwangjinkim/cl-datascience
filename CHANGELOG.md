@@ -3,6 +3,9 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT package `clds-user` (src/dsl/user.lisp): the Common Lisp
+  tidyverse and the DSL in one package, made with
+  `tidyverse:define-tidy-package`, so analyses need no package prefixes.
 - EXPERIMENT general rule book (src/dsl/general.lisp): the default for
   plain tibbles, including the common core and included by the clinical
   book. Rules: Wilson, exact and Wald intervals with the success-failure
