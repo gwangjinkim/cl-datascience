@@ -3,6 +3,10 @@
 ## [Unreleased]
 
 ### Added
+- EXPERIMENT docs/INTRODUCTION.md: an introduction to the DSL as it is
+  (first question, declarations, verbs, ranking, rule books, writing rules,
+  how it works, R references, limits), with real output. docs/build-pdf.sh
+  takes the document name (`docs/build-pdf.sh INTRODUCTION`).
 - EXPERIMENT package `clds-user` (src/dsl/user.lisp): the Common Lisp
   tidyverse and the DSL in one package, made with
   `tidyverse:define-tidy-package`, so analyses need no package prefixes.
